@@ -1,0 +1,39 @@
+#!/bin/bash
+
+MplayerBin=/usr/bin/mplayer
+#LinkRadio=http://icecast.ismedia.cz:8000/batacz.ogg
+LinkRadio=http://icecast.ismedia.cz:8000/batask.ogg
+
+while true
+do
+# Nastaveni doby prehravani BataRadia
+#caszacatek=$(/bin/date -d '7:00:00' +%s)
+#caskonec=$(/bin/date -d '22:00:00' +%s)
+
+# Aktualni cas
+#casaktualni=$(/bin/date +%s)
+
+# Podminka pro prehravani v nastavene dobe
+#if ((($casaktualni > $caszacatek) && ($casaktualni < $caskonec))); then
+
+	runradio=$(/sbin/pidof mplayer)
+	if [ -n "$runradio" ]; then
+		echo ""
+	else
+		$MplayerBin $LinkRadio &> /dev/null &
+		echo "BataRadio bylo automaticky spusteno."
+	fi
+
+#else
+#	runradio=$(/sbin/pidof mplayer)
+#	if [ -n "$runradio" ]; then
+	
+#		/usr/bin/killall /usr/bin/mplayer
+#	else
+#		echo "BataRadio neni nutne ukocit."
+#	fi
+#fi
+# Nastaveni pravidelne kontroly spusteneho BataRadia
+	echo "Dalsi kontrola spusteni BataRadia bude provedena za 1 minutu."
+	sleep 1m
+done

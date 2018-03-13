@@ -1,0 +1,78 @@
+#!/bin/sh
+#
+# bata-radio   BataRadio startup/shutdown script
+#
+#
+# chkconfig: 35 99 99
+#
+# description: BataRadio pro prodejny Bata
+
+# Define Lock file
+LockFile=/var/lock/subsys/bata-radio
+
+# Source function library.
+. /etc/init.d/functions
+
+prog=BataRadio
+
+RETVAL=0
+
+start() {
+        if [ -f $LockFile ]; then
+            echo "$prog je jiz spusteno"
+            RETVAL=$?
+        else
+        echo -n "Spoustim $prog"
+        /usr/local/bin/bata-radio-check &> /dev/null &
+        touch $LockFile
+        RETVAL=$?
+        echo
+        fi
+}
+
+status() {
+  	if [ -f $LockFile ]; then
+	    echo "$prog je spusteno"
+            RETVAL=$?
+	else
+	    echo "$prog je zastaveno"
+            RETVAL=$?
+	fi
+	exit 0
+}
+
+stop() {
+  	echo -n "Ukoncuji $prog"
+	killproc bata-radio-check
+	killproc mplayer
+	rm -f $LockFile
+	RETVAL=$?
+	echo
+}	
+
+restart() {
+  	stop
+	start
+}	
+
+case "$1" in
+  start)
+	start
+	;;
+  status)
+	status
+	RETVAL=$?
+	;;
+  restart)
+	$0 stop
+	$0 start
+	;;
+  stop)
+	stop
+	;;
+  *)
+	echo "Moznosti: /etc/init.d/bata-radio {start|stop|status|restart}"
+	exit 1
+esac
+exit $RETVAL
+

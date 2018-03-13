@@ -1,0 +1,13 @@
+#!/bin/bash
+
+DIST=$(awk '/Name:/{name=$2} /Version:/{version=$2} END{print name "-" version}' <bata-radio.spec)
+
+rm -rf $DIST.tar.gz $DIST
+mkdir $DIST
+cp -R etc usr $DIST
+cp *.spec $DIST
+tar -cvf $DIST.tar.gz $DIST
+
+rpmbuild -ta $DIST.tar.gz
+rm -rf $DIST.tar.gz $DIST
+
